@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Heap Ignore</title>
+    <!-- Capture client-side errors -->
+    <script type="text/javascript">
+      window.errCount = 0;
+      window.onerror = function(message, url, lineNum) {
+       if (!url) { return; } // resolves weird issue in Android selenium
+       window.errCount++;
+       errorCur = document.getElementById("errorDisp").innerHTML;
+       errorCur = errorCur + window.errCount + ". Line " + lineNum + ": " + message + "(" + url + ")<br/>";
+       document.getElementById("errorDisp").innerHTML = errorCur;
+     };
+    </script>
+    <!-- Include Heap -->
+    <script type="text/javascript">
+      function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
+      window.heapReadyCb=window.heapReadyCb||[],window.heap=window.heap||[],heap.load=function(e,t){window.heap.envId=e,window.heap.clientConfig=t=t||{},window.heap.clientConfig.shouldFetchServerConfig=!1;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://sdk.us.heap-api.com/config/"+e+"/heap_config.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r);var n=["init","startTracking","stopTracking","track","resetIdentity","identify","getSessionId","getUserId","getIdentity","addUserProperties","addEventProperties","removeEventProperty","clearEventProperties","addAccountProperties","addAdapter","addTransformer","addTransformerFn","onReady",],i=function(e){return function(){var t=Array.prototype.slice.call(arguments,0);window.heapReadyCb.push({name:e,fn:function(){heap[e]&&heap[e].apply(heap,t)}})}};for(let o=0;o<n.length;o++)heap[n[o]]=i(n[o])};
+      heap.load('670508865', {
+        sdk: { version: '0.0.0-prealpha0' },
+        logLevel: 'trace',
+      });
+
+    </script>
+  </head>
+  <body>
+    <div id="top-level-heap-ignore-with-nesting" heap-ignore='true'>
+      <div id='div-nested-in-heap-ignore-div'>with an inner div</div>
+    </div>
+    <div id="no-heap-ignore">just a regular div no heap ignore</div>
+
+    <div id='ie-safe-simple-child-heap-ignore'><span><span heap-ignore='true'>sensitive text</span></span> normal text</div>
+
+    <div id='inner-text-heap-ignored'>
+      <span >div with a heap ignored child</span>
+      <span heap-ignore='true'>heap ignored child start
+        <span>but then another paragraph</span>
+        and some more text in the middle span
+      </span>
+      text in outer div again with enough text to hit truncation limit
+    </div>
+
+    <div id='deep-nested-heap-ignore'>
+      deep nested start <span> more text <span heap-ignore='true'>and sensitive</span> and then regular text</span>
+    </div>
+
+    <div id='a-lot-of-whitespace'>
+      start of a lot of whitespace                                        <span heap-ignore='true'>sensitive data</span>
+    </div>
+  </body>
+</html>

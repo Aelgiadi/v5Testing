@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Heap Test</title>
+    <style type="text/css">
+      h1.main {
+        font-size: 64px;
+      }
+
+      div.btn {
+        font-size: 22px;
+        padding: 4px;
+        margin: 10px;
+        border: 1px solid black;
+        width: 120px;
+        background-color: ghostWhite;
+      }
+
+      div.btn:hover {
+        cursor: pointer;
+        background-color: #f1f1f1;
+      }
+
+      div.error {
+        background-color: red;
+      }
+      div.error:hover {
+        background-color: #EA0000;
+      }
+    </style>
+    <!-- Capture client-side errors -->
+    <script type="text/javascript">
+      window.errCount = 0;
+      window.onerror = function(message, url, lineNum) {
+       if (!url) { return; } // resolves weird issue in Android selenium
+       window.errCount++;
+       errorCur = document.getElementById("errDisp").innerHTML;
+       errorCur = errorCur + window.errCount + ". Line " + lineNum + ": " + message + "(" + url + ")<br/>";
+       document.getElementById("errDisp").innerHTML = errorCur;
+     };
+    </script>
+    <!-- Include Heap -->
+    <script type="text/javascript">
+      // We want to test the old snippet here (which sets window._heapid), to ensure heap.js is backwards-compatible.
+      // This old snippet has been mutilated a bit to not have an http/https switch
+      function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+      heap.load("670508865");
+      // Make sure addEventProperties works when called in head.
+      heap.addEventProperties({loggedIn: 'true'});
+
+      // Test that we correctly handle identify calls in onload handlers.
+      window.onload = function(){
+        heap.identify({'Experiment #1': 'Slower Feed'});
+        heap.addUserProperties({'page2': 'hit'});
+      }
+    </script>
+  </head>
+  <body id="page2">
+    <h2 id="header">This is Page 2 of Heap!</h2>
+    <div id="clickme">Click Me</div>
+    <iframe name="iframe" id="iframe" src="/iframe.html" width="400" height="300">
+       <p>Your browser does not support iframes.</p>
+    </iframe>
+    <div id="errDisp">
+      errors<br />
+    </div>
+
+    <script>
+      createLink = function(relativePath, id, text, suffix) {
+        var href = window.location.href.replace('page2', relativePath) + suffix;
+        var anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.id = id;
+        anchor.innerHTML = text;
+        document.body.appendChild(anchor);
+      };
+
+      createLinks = function(links) {
+        for (var i in links) {
+          if (!links.hasOwnProperty(i)) {
+            continue;
+          }
+          var link = links[i];
+          createLink(link[0], link[1], link[2], link[3]);
+        }
+      };
+
+      var links = [
+        ['page1', 'link2', 'Check out another page', ''],
+        ['page1', 'page1_qs', 'Page 1 with query string', '?q=testing'],
+        ['page1_without_load', 'page1_without_load', 'Check out another page', ''],
+        ['page1_without_load', 'page1_without_load_qs', 'Page 1 with query string', '?q=testing'],
+      ];
+
+      createLinks(links);
+    </script>
+  </body>
+</html>

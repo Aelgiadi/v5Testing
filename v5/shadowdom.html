@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Shadow DOM test page</title>
+    <script type="text/javascript">
+        window.heapReadyCb=window.heapReadyCb||[],window.heap=window.heap||[],heap.load=function(e,t){window.heap.envId=e,window.heap.clientConfig=t=t||{},window.heap.clientConfig.shouldFetchServerConfig=!1;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://sdk.us.heap-api.com/config/"+e+"/heap_config.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r);var n=["init","startTracking","stopTracking","track","resetIdentity","identify","getSessionId","getUserId","getIdentity","addUserProperties","addEventProperties","removeEventProperty","clearEventProperties","addAccountProperties","addAdapter","addTransformer","addTransformerFn","onReady",],i=function(e){return function(){var t=Array.prototype.slice.call(arguments,0);window.heapReadyCb.push({name:e,fn:function(){heap[e]&&heap[e].apply(heap,t)}})}};for(let o=0;o<n.length;o++)heap[n[o]]=i(n[o])};
+        heap.load('670508865', {
+            sdk: { version: '0.0.0-prealpha0' },
+            logLevel: 'trace',
+        });
+    </script>
+</head>
+<body>
+<my-custom-element></my-custom-element>
+<br/>
+<br/>
+<h1>Shadowdom Form</h1>
+<custom-form-test></custom-form-test>
+<br/>
+<br/>
+<h1>REgular Form</h1>
+<div class="regular-dom-form" data-heap-redact-text='true'>
+    <form id="my-form" onsubmit="return false;">
+        <label>
+            Username:
+            <input type="text" name="username" />
+        </label>
+        <label>
+            Full name:
+            <input type="text" name="full-name" />
+        </label>
+        <label>
+            Password:
+            <input type="password" name="password" />
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<br/>
+<br/>
+<button onclick="renderSecretShadowdom()">Render NEW shadowdom form</button>
+<secret-form data-heap-redact-text='true' data-heap-redact-attributes="data-pwd"></secret-form>
+<br/>
+<br/>
+<button onclick="renderOpenShadowdomInClosedContext()">Render open shadowdom in closed context</button>
+<closed-open-form></closed-open-form>
+
+<script>
+	class MyCustomElement extends HTMLElement {
+		constructor() {
+			super();
+
+			// Attach a shadow root to the element.
+			const shadowRoot = this.attachShadow({mode: 'open'});
+
+			// Create a nested element with its own shadow root.
+			const nestedElement = document.createElement('div');
+			const nestedShadowRoot = nestedElement.attachShadow({mode: 'open'});
+			nestedShadowRoot.innerHTML = `<style>
+            p {
+              color: red;
+            }
+            span {
+              color: blue;
+              border: 1px solid black;
+            }
+            </style>
+            <p>Second Shadow Root
+                <span>Custom Style</span>
+
+            </p>`;
+
+			// Add the nested element to the shadow root of the custom element.
+			shadowRoot.appendChild(nestedElement);
+		}
+	}
+
+	// Define the new element
+	customElements.define('my-custom-element', MyCustomElement);
+
+	class CustomForm extends HTMLElement {
+		constructor() {
+			super();
+
+			// Attach a shadow root to the element.
+			const shadowRoot = this.attachShadow({mode: 'open'});
+
+			// Create a nested element with its own shadow root.
+			const nestedElement = document.createElement('div');
+			const nestedShadowRoot = nestedElement.attachShadow({mode: 'open'});
+			nestedShadowRoot.innerHTML = `<style>
+            </style>
+            <form id="my-form" onsubmit="return false;">
+              <label>
+                Username:
+                <input type="text" name="username" />
+              </label>
+              <label>
+                Full name:
+                <input type="text" name="full-name" />
+              </label>
+              <label>
+                Password:
+                <input type="password" name="password" data-pwd='asdfasdfasdf'/>
+              </label>
+                <input type="submit" value="Submit">
+            </form>`;
+
+			// Add the nested element to the shadow root of the custom element.
+			shadowRoot.appendChild(nestedElement);
+		}
+	}
+
+	customElements.define('custom-form-test', CustomForm);
+
+	var renderSecretShadowdom = function() {
+		class SecretForm extends HTMLElement {
+			constructor() {
+				super();
+
+				// Attach a shadow root to the element.
+				const shadowRoot = this.attachShadow({mode: 'open'});
+
+				// Create a nested element with its own shadow root.
+				const nestedElement = document.createElement('div');
+				const nestedShadowRoot = nestedElement.attachShadow({mode: 'open'});
+				nestedShadowRoot.innerHTML = `<style>
+              </style>
+              <form id="my-form" onsubmit="return false;">
+                <label>
+                  Username:
+                  <input type="text" name="username" />
+                </label>
+                <label>
+                  Full name:
+                  <input type="text" name="full-name" />
+                </label>
+                <label>
+                  Password:
+                  <input type="password" name="password" />
+                </label>
+                  <input type="submit" value="Submit">
+              </form>`;
+
+				// Add the nested element to the shadow root of the custom element.
+				shadowRoot.appendChild(nestedElement);
+			}
+		}
+
+		customElements.define('secret-form', SecretForm);
+	}
+
+		var renderOpenShadowdomInClosedContext = function() {
+			class ClosedOpenForm extends HTMLElement {
+				constructor() {
+					super();
+
+					// Attach a shadow root to the element.
+					const shadowRoot = this.attachShadow({mode: 'closed'});
+
+					// Create a nested element with its own shadow root.
+					const nestedElement = document.createElement('div');
+					const nestedShadowRoot = nestedElement.attachShadow({mode: 'open'});
+					nestedShadowRoot.innerHTML = `<style>
+              </style>
+              <form id="my-form" onsubmit="return false;">
+                <label>
+                  Username:
+                  <input type="text" name="username" />
+                </label>
+                <label>
+                  Full name:
+                  <input type="text" name="full-name" />
+                </label>
+                <label>
+                  Password:
+                  <input type="password" name="password" />
+                </label>
+                  <input type="submit" value="Submit">
+              </form>`;
+
+					// Add the nested element to the shadow root of the custom element.
+					shadowRoot.appendChild(nestedElement);
+				}
+			}
+
+			customElements.define('closed-open-form', ClosedOpenForm);
+		}
+</script>
+</body>
+</html>

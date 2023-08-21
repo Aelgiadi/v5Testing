@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Heap Ignore</title>
+    <!-- Capture client-side errors -->
+    <script type="text/javascript">
+      window.errCount = 0;
+      window.onerror = function(message, url, lineNum) {
+       if (!url) { return; } // resolves weird issue in Android selenium
+       window.errCount++;
+       errorCur = document.getElementById("errorDisp").innerHTML;
+       errorCur = errorCur + window.errCount + ". Line " + lineNum + ": " + message + "(" + url + ")<br/>";
+       document.getElementById("errorDisp").innerHTML = errorCur;
+     };
+    </script>
+    <!-- Include Heap -->
+    <script type="text/javascript">
+      function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+      heap.load("670508865");
+
+    </script>
+  </head>
+  <body>
+    <div id="top-level-heap-ignore-with-nesting" heap-ignore='true'>
+      <div id='div-nested-in-heap-ignore-div'>with an inner div</div>
+    </div>
+    <div id="no-heap-ignore">just a regular div no heap ignore</div>
+
+    <div id='ie-safe-simple-child-heap-ignore'><span><span heap-ignore='true'>sensitive text</span></span> normal text</div>
+
+    <div id='inner-text-heap-ignored'>
+      <span >div with a heap ignored child</span>
+      <span heap-ignore='true'>heap ignored child start
+        <span>but then another paragraph</span>
+        and some more text in the middle span
+      </span>
+      text in outer div again with enough text to hit truncation limit
+    </div>
+
+    <div id='deep-nested-heap-ignore'>
+      deep nested start <span> more text <span heap-ignore='true'>and sensitive</span> and then regular text</span>
+    </div>
+
+    <div id='a-lot-of-whitespace'>
+      start of a lot of whitespace                                        <span heap-ignore='true'>sensitive data</span>
+    </div>
+  </body>
+</html>

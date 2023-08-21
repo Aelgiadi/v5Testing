@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Heap Test really long title really long title really long title really long title really long title really long title really long title really long title really long title really long title really long title really long title really long title really long title</title>
+    <style type="text/css">
+      h1.main {
+        font-size: 32px;
+      }
+
+      div.btn {
+        font-size: 22px;
+        padding: 4px;
+        margin: 10px;
+        border: 1px solid black;
+        width: 300px;
+      }
+
+      div.btn:hover {
+        cursor: pointer;
+        background-color: #f1f1f1;
+      }
+
+      div.error {
+        background-color: red;
+      }
+      div.error:hover {
+        background-color: #EA0000;
+      }
+
+      div#clicky {
+        background-color: blue;
+        color: #fff;
+        padding: 10px;
+        margin-bottom: 30px;
+      }
+
+      input.logo {
+        height: 32px;
+        width: 32px;
+      }
+    </style>
+    <!-- Record tracking pixels -->
+    <script src="/js/record_pixels.js"></script>
+    <!-- Used to fake out timers in some tests -->
+    <script src="/js/sinon.js"></script>
+    <!-- Capture client-side errors -->
+    <script type="text/javascript">
+      window.errCount = 0;
+      window.onerror = function(message, url, lineNum){
+        if (!url) { return; } // resolves weird issue in Android selenium
+        window.errCount++;
+        errorCur = document.getElementById("errorDisp").innerHTML;
+        errorCur = errorCur + window.errCount + ". Line " + lineNum + ": " + message + "(" + url + ")<br/>";
+        document.getElementById("errorDisp").innerHTML = errorCur;
+      };
+    </script>
+    <!-- Include Heap -->
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+      heap.load("670508865");
+    </script>
+  </head>
+  <body id="page1">
+   <div id='requests'></div>
+    <h2 id="header">This is Heap.</h2>
+    <a href="javascript:void(0)" onclick="callTrack()" id="testTrack">Click for track</a>
+    <a href="javascript:void(0)" onclick="triggerTelemetryFn()" id="triggerTelemetry">Click to trigger telemetry</a>
+    <a href="javascript:void(0)" onclick="triggerResetIdentity()" id="triggerResetIdentity">Click to reset identity</a>
+    <a href="javascript:void(0)" onclick="segmentSourceTrack()" id="testTrackSegmentSource">Click for segment source track</a>
+    <div id="clicky"></div>
+    <div id="errorDisp">
+      errors<br/>
+    </div>
+    <div class="nested" id="test-nested">
+      <span class="layer" id="another">
+        <div class="btn" id="regElem">Signup now!</div>
+      </span>
+    </div>
+    <div class="btn" id="donot">Do not signup now!</div>
+    <svg id="svgelem" class="svg class test" width="100" height="50">
+      <g>
+        <text x="85" y="20" dy=".32em" text-anchor="end" style="color: #333333">SVG TEXT</text>
+      </g>
+    </svg>
+    <svg id="svgelem2" class="svg class test" width="100" height="50" data-test="testing" aria-label="testing">
+      <g>
+        <text x="85" y="20" dy=".32em" text-anchor="end" style="color: #333333">SVG TEST CLICK</text>
+      </g>
+    </svg>
+    <span id="asdf" contenteditable>
+      asdfsadf
+      <a href='../page3' id='contenteditable-link'>editable link</a>
+    </span>
+    <div class="btn" id="pushstate" onclick="pushStateNavigate();">Click to trigger pushstate event</div>
+    <div class="btn" id="replacestate" onclick="replaceStateNavigate();">Click to trigger replacestate event</div>
+    <div class="testescape;|[]" maxlength=500 onclick="javascript:void 0" onsubmit="javascript: void 0" data-part="attr test" data-analytics="section" data-reactid="shouldbeignored" data-longattr="lots of garbage in this attribute that we shouldn't bother picking up because its tooooooooooo loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong">
+      <a class="btn" id="hashchange" href="#hashsection" emptyattr>
+        <span id="hashchangespan" custom="field">Click to trigger hashchange event</span>
+      </a>
+    </div>
+    <div>
+      <a class="btn" id="querychange" href="?test=queryparam">
+        <span id="querychangespan">Click to trigger hashchange event with the query changed</span>
+      </a>
+    </div>
+    <form id="signup" class="signup" action="../page3" method="get">
+      Name: <input id="name" type="text" name="name"><br>
+      Password: <input id="password" type="password" name="password"><br>
+      <input id="hungry" type="checkbox" name="persontype" value="hungry">Hungry<br>
+      <input id="angry" type="checkbox" name="persontype" value="angry">Angry<br>
+      <input id="mandarin" type="radio" name="language" value="mandarin">Mandarin<br>
+      <input id="english" type="radio" name="language" value="english">English<br>
+      <button id="submit" type="submit" value="Submit">
+        <span id="submit-span">Click here</span>
+      </button>
+    </form>
+    <div id="brock" class="c_qx c_qy c_pq c_qz c_qn c_j c_qx c_qy c_pq c_qz c_qn c_j c_ra c_fi c_iy c_gn c_is c_dn c_qp c_rb c_rc c_rd c_bc c_hh c_aq c_ar c_cg c_hg c_cp c_cq c_e c_dk" height="120" data-foobar="multi
+    line
+    attr">some stuff</div>
+    <textarea id="mytextarea" class="mytextarea" height="120" placeholder="Example: yoursite.com"></textarea>
+    <textarea id="mytextareawithtext" class="mytextareawithtext" height="120">this is some text inside a textarea element</textarea>
+
+    <div id="squirtle-owner" class="title">squirtle: Misty</div>
+    <div id="warturtle-owner" class="title">warturtle: Misty</div>
+    <div id="poliwrath-owner" class="title">poliwrath: Misty</div>
+    <div id="gyarados-owner" class="title">gyarados: Misty</div>
+    <div id="tentacool-owner" class="title">tentacool: Misty</div>
+    <div id="staryu-owner" class="title">staryu: Misty</div>
+    <div id="misty">Hi I'm Misty</div>
+    <div id="ash-ketchum" class="ash-ketchum">Hi I'm Ash</div>
+    <ul>
+      <li id="who-does-ash-own">chamander</li>
+      <li id="who-does-misty-own">vaporeon</li>
+      <li id="squirtle" name="squirtle">squirtle</li>
+      <li id="poliwrath" name="poliwrath">poliwrath</li>
+      <li id="gyarados" name="gyarados">gyarados</li>
+      <li id="tentacool" name="tentacool">tentacool</li>
+      <li id="staryu" name="staryu">staryu</li>
+      <li data-shiny="true" id="warturtle" name="warturtle">warturtle</li>
+    </ul>
+
+    <form id="parameters-test" action="/test/submit" method="post">
+      <button id="submit-parameters" type="submit" name="valid" value="true">
+        <span>Click here to test parameters!</span>
+      </button>
+
+      <button id="submit-parameters-dummy" type="submit" name="valid" value="false" onclick="return false;">
+        <span>Get some free money!</span>
+      </button>
+
+      <button id="submit-parameters-typeless" name="valid" value="true"></button>
+
+      <button id="submit-parameters-button-image" type="image" name="valid" value="true"></button>
+
+      <button id="submit-parameters-invalid-type" type="blorp" name="valid" value="true"></button>
+
+      <button id="submit-parameters-no-attributes" type="submit"></button>
+    </form>
+
+    <form action="/test/submit" method="post" id="post-submit-modified">
+      <input id="submit-post-submit-modified" type="submit" name="commit" value="Submit">
+    </form>
+
+    <form id="input-form-html5-overrides-test" action="../page3" method="get">
+      <button id="formoverride" type="submit" name="valid" value="true" formaction="/test/submit" formmethod="post">
+        Try out input form overrides
+      </button>
+    </form>
+
+    <!-- :TRICKY: The coordinates for the click will change if you add an element
+         above this one in the DOM. -->
+    <h3>Button for humans only:</h3>
+    <form id="image-test-human" action="/test/submit" method="post">
+      <input id="submit-image-human" type="image" name="logo" class="logo" src="/favicon.ico">
+    </form>
+
+    <h3>Button for robots only:</h3>
+    <form id="image-test-robot" action="/test/submit" method="post">
+      <input id="submit-image-robot" type="image" name="logo" class="logo" src="/favicon.ico">
+    </form>
+
+    <h3>Button with no name attribute:</h3>
+    <form id="image-test-nameless" action="/test/submit" method="post">
+      <input id="submit-image-nameless" type="image" class="logo" src="/favicon.ico">
+    </form>
+
+    <h3>Button with input named 'id':</h3>
+    <form id="image-test-id-collision" action="/test/submit" method="post">
+      <input id="submit-button-id" name="id">
+      <button id="submit-collision-button" type="submit" value="Submit"></button>
+    </form>
+
+    <h3>Button that submits to the form without being inside the form's DOM tree</h3>
+    <button type="submit" id="formoverrideOot" name="ootValid" value="true" form="input-form-html5-overrides-test" formaction="/test/submit" formmethod="post">
+      Try out input form overrides out of tree
+    </button>
+
+    <form id="input-form-html5-overrides-test-nested" action="../page3" method="get">
+      <button id="formoverrideNested" type="submit" name="inDiffTree" value="true" form="input-form-html5-overrides-test" formaction="/test/submit" formmethod="post">
+        Try out input form overrides with form action
+      </button>
+      <input type="text" id="nestedTextField" name="badform" value="true">
+    </form>
+    <h3>Some text field that should get sent along with the submit</h3>
+    <input type="text" id="textfieldOot" name="ootText" value="grapes" form="input-form-html5-overrides-test">
+    <input type="text" name="valid" value="true" form="input-form-html5-overrides-test">
+
+    <select id="select-button">
+      <option value="apple">Apple</option>
+      <option value="banana">Banana</option>
+      <option value="cherry">Cherry</option>
+    </select>
+
+    <a id="download-test" download="page3.html" href="../page3">Download the congrats page!</a>
+
+    <h1 class="main header" id="penh1">Seriously, check it out.</h1>
+    <h2 id="targetclasstruncation" class="lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur">Testing target class truncation</h2>
+    <h2 id="targetclassnormal" class="crow stuff">Make sure we don't drop target classes inappropriately</h2>
+    <h2 id="targetclassspaces" class="  bread  magic  ">Make sure we strip off extra spaces</h2>
+
+    <div id='secret-stuff' heap-ignore='true'>
+      <input id='secret-text' name='secret'>
+    </div>
+
+    <input id="pii-text-dynamic-match" data-safe="safe" data-mirrored="mirrored value">
+    <input id="pii-text-static-match"  data-safe="safe" data-unsafe="pii" value="pii">
+    <input id="pii-text-static-empty-match"  data-safe="" value="">
+
+    <input id="no-passwords" type="password" name="signupnow" value="blerp">
+    <!-- :TODO: Starting in ~Firefox 50 the unclosed inputs damage data collection for subsequent div -->
+    <div id="weirdness">some content</div>
+    <div id="not-password" value="phil">punxsutawney</div>
+    <div id= 'cow-emojis'>
+      \uD83D\uDC04 \uD83D\uDC04 \uD83D\uDC04
+    </div>
+    <a href="../page3" id="draxx">We gonna draxx them sklounst 🐸</a>
+
+    <div id="previousPage">
+        <h1>Previous Page</h1>
+        <a href="javascript:pushStateToPathname('previous_page');" id="previousPagePush">Push!</a>
+        <a href="javascript:replaceStateNavigate();" id="previousPageReplace">Replace</a>
+        <a href="#thisisanewsection" id="previousPageUpdateHash">Change hash</a>
+        <a href="javascript:queryStateChange();" id="previousPageUpdateQS">Replace Query</a>
+    </div>
+
+    <a href="mailto:blorp@example.com" id="blorpmail">Email Blorp</a>
+
+    <script>
+      errorFn = function(){
+        x/y; //should cause error
+      };
+      errorFnLater = function() {
+        var clickyHtml = document.getElementById('clicky').innerHTML;
+        document.getElementById('clicky').innerHTML = clickyHtml + "clicked; ";
+        setTimeout(errorFn, 10);
+      };
+      dummyFn = function() {
+        return 1;
+      };
+      mirrorValueInAttribute = function() {
+        var element = document.getElementById('pii-text-dynamic-match');
+        testing.addEventListener(element, 'keyup', function(e) {
+          e.target.setAttribute('data-mirrored', e.target.value);
+        });
+      };
+      triggerIdentifyV1 = function() {
+        heap.identify({email: 'matinm1@gmail.com'});
+        return 1;
+      };
+      triggerIdentify = function() {
+        heap.identify.apply(this, arguments);
+        return 1;
+      };
+      triggerIdentifyAddUserProperties = function() {
+        heap.identify('batinb2');
+        heap.addUserProperties({foo: 'bar', baz: 'qux', quux: null, quuz: undefined, corge: ''});
+        return 1;
+      };
+      triggerIdentifyUser = function() {
+        heap.identify(333333);
+        return 1;
+      };
+      triggerIdentifyUser2 = function() {
+        heap.identify(444444);
+        return 1;
+      };
+      triggerResetIdentity = function() {
+        heap.resetIdentity();
+        return 1;
+      };
+
+      var psNum = 1;
+      var initialLocation = document.location.pathname;
+
+      pushStateToPathname = function (pathname) {
+        if (!window.history.pushState) { return; }
+        window.history.pushState({}, "Title", initialLocation + "/" + pathname);
+      };
+
+      pushStateNavigate = function () {
+        if (!window.history.pushState) { return; }
+        window.history.pushState({}, "Title", initialLocation + "/" + psNum);
+        psNum++;
+      };
+
+      replaceStateNavigate = function () {
+        if (!window.history.replaceState) { return; }
+        window.history.replaceState({}, "Title", initialLocation + "/" + psNum);
+        psNum++;
+      };
+
+      queryStateChange = function() {
+        if (!window.history.pushState) { return; }
+        window.history.pushState({}, "Title", document.location.pathname + "?query=" + psNum);
+        psNum++
+      };
+
+      callTrack = function () {
+        obj = {
+          url: '/simple?asdf=234',
+          'The Content': 'Video',
+          zeroTest: 0,
+          trueTest: true,
+          falseTest: false,
+          emptyString: '',
+          undefTest: undefined,
+          // Objects, including dates, are unsupported.
+          objTest: { a: 1},
+          dateTest: new Date()
+        }
+        obj.foo = obj;
+        obj.bar = obj.foo;
+        heap.track('Prop Tester', obj);
+      };
+
+      triggerTelemetryFn = function () {
+        heap.identify('null');
+      }
+
+      segmentSourceTrack = function () {
+        obj = {
+          url: '/simple?asdf=234',
+          'The Content': 'Video',
+          zeroTest: 0,
+          trueTest: true,
+          falseTest: false,
+          emptyString: '',
+          undefTest: undefined,
+          // Objects, including dates, are unsupported.
+          objTest: { a: 1},
+          dateTest: new Date()
+        }
+
+        heap.track('Segment Prop Tester', obj, 'segment')
+      }
+
+      createLink = function(relativePath, id, text, suffix) {
+        var href = window.location.href.replace('page1', relativePath) + suffix;
+        var anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.id = id;
+        anchor.innerHTML = text;
+        document.body.appendChild(anchor);
+      };
+
+      createLinks = function(links) {
+        for (var i in links) {
+          if (!links.hasOwnProperty(i)) {
+            continue;
+          }
+          var link = links[i];
+          createLink(link[0], link[1], link[2], link[3]);
+        }
+      };
+
+      // Include a blank character to ensure Postgres doesn't break.
+      document.getElementById('regElem').innerText += '\x00';
+      var draxx = document.getElementById('draxx')
+      draxx.onclick = function(e) {
+        var me,
+            url,
+            elem = e.target;
+        if (elem.href && elem.href != "null") {
+            url = elem.href;
+            setTimeout(function() {
+                elem.href = null;
+                elem.removeAttribute('href');
+            }, 1);
+
+            var target = elem.target;
+            if (target != '_blank' && target != '_top' && target != '_parent') {
+                window.location=url;
+            }
+        }
+        setTimeout(function(){
+            elem.href = url;
+        }, 2000)
+      };
+
+      var links = [
+        ['page2', 'link', 'Check out another page', '', ''],
+        ['page2', 'page2_qs', 'Page 2 with query string', '?q=example'],
+        ['page3', 'link3', 'Check out yet another page', '', ''],
+      ];
+
+      createLinks(links);
+
+      testing = {
+        preventDefault: function(event) {
+          event.preventDefault ? event.preventDefault() : event.returnValue = false;
+        },
+        stopPropagation: function(event) {
+          event.stopPropagation ? event.stopPropagation() : event.cancelBubble = true;
+        },
+        addEventListener: function(element, eventType, eventHandler, useCapture) {
+          if (element.addEventListener) {
+            element.addEventListener(eventType, eventHandler, useCapture);
+          }
+          else if (element.attachEvent) {
+            element.attachEvent('on' + eventType, function() {
+              var event = window.event;
+              event.currentTarget = element;
+              event.target = event.srcElement;
+              eventHandler.call(element, event);
+            });
+          }
+          else {
+            element['on' + eventType] = eventHandler;
+          }
+        }
+      };
+
+      // https://www.w3schools.com/js/js_cookies.asp
+      function deleteCookies() {
+        document.cookie = "_hp2_.props.<% appId %>=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "_hp2_.ses_props.<% appId %>=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "_hp2_.id.<% appId %>=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      }
+    </script>
+  </body>
+</html>

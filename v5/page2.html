@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Heap Test</title>
+    <style type="text/css">
+      h1.main {
+        font-size: 64px;
+      }
+
+      div.btn {
+        font-size: 22px;
+        padding: 4px;
+        margin: 10px;
+        border: 1px solid black;
+        width: 120px;
+        background-color: ghostWhite;
+      }
+
+      div.btn:hover {
+        cursor: pointer;
+        background-color: #f1f1f1;
+      }
+
+      div.error {
+        background-color: red;
+      }
+      div.error:hover {
+        background-color: #EA0000;
+      }
+    </style>
+    <!-- Capture client-side errors -->
+    <script type="text/javascript">
+      window.errCount = 0;
+      window.onerror = function(message, url, lineNum) {
+       if (!url) { return; } // resolves weird issue in Android selenium
+       window.errCount++;
+       errorCur = document.getElementById("errDisp").innerHTML;
+       errorCur = errorCur + window.errCount + ". Line " + lineNum + ": " + message + "(" + url + ")<br/>";
+       document.getElementById("errDisp").innerHTML = errorCur;
+     };
+    </script>
+    <!-- Include Heap -->
+    <script type="text/javascript">
+      // We want to test the old snippet here (which sets window._heapid), to ensure heap.js is backwards-compatible.
+      // This old snippet has been mutilated a bit to not have an http/https switch
+      function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
+      window.heapReadyCb=window.heapReadyCb||[],window.heap=window.heap||[],heap.load=function(e,t){window.heap.envId=e,window.heap.clientConfig=t=t||{},window.heap.clientConfig.shouldFetchServerConfig=!1;var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src="https://sdk.us.heap-api.com/config/"+e+"/heap_config.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(a,r);var n=["init","startTracking","stopTracking","track","resetIdentity","identify","getSessionId","getUserId","getIdentity","addUserProperties","addEventProperties","removeEventProperty","clearEventProperties","addAccountProperties","addAdapter","addTransformer","addTransformerFn","onReady",],i=function(e){return function(){var t=Array.prototype.slice.call(arguments,0);window.heapReadyCb.push({name:e,fn:function(){heap[e]&&heap[e].apply(heap,t)}})}};for(let o=0;o<n.length;o++)heap[n[o]]=i(n[o])};
+      heap.load('670508865', {
+        sdk: { version: '0.0.0-prealpha0' },
+        logLevel: 'trace',
+      });
+      // Make sure addEventProperties works when called in head.
+      heap.addEventProperties({loggedIn: 'true'});
+
+      // Test that we correctly handle identify calls in onload handlers.
+      window.onload = function(){
+        heap.identify({'Experiment #1': 'Slower Feed'});
+        heap.addUserProperties({'page2': 'hit'});
+      }
+    </script>
+  </head>
+  <body id="page2">
+    <h2 id="header">This is Page 2 of Heap!</h2>
+    <div id="clickme">Click Me</div>
+    <iframe name="iframe" id="iframe" src="/iframe.html" width="400" height="300">
+       <p>Your browser does not support iframes.</p>
+    </iframe>
+    <div id="errDisp">
+      errors<br />
+    </div>
+
+    <script>
+      createLink = function(relativePath, id, text, suffix) {
+        var href = window.location.href.replace('page2', relativePath) + suffix;
+        var anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.id = id;
+        anchor.innerHTML = text;
+        document.body.appendChild(anchor);
+      };
+
+      createLinks = function(links) {
+        for (var i in links) {
+          if (!links.hasOwnProperty(i)) {
+            continue;
+          }
+          var link = links[i];
+          createLink(link[0], link[1], link[2], link[3]);
+        }
+      };
+
+      var links = [
+        ['page1', 'link2', 'Check out another page', ''],
+        ['page1', 'page1_qs', 'Page 1 with query string', '?q=testing'],
+        ['page1_without_load', 'page1_without_load', 'Check out another page', ''],
+        ['page1_without_load', 'page1_without_load_qs', 'Page 1 with query string', '?q=testing'],
+      ];
+
+      createLinks(links);
+    </script>
+  </body>
+</html>
