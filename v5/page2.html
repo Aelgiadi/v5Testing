@@ -40,7 +40,7 @@
      };
     </script>
     <!-- Include Heap -->
-    <!-- <script type="text/javascript">
+    <script type="text/javascript">
       // We want to test the old snippet here (which sets window._heapid), to ensure heap.js is backwards-compatible.
       // This old snippet has been mutilated a bit to not have an http/https switch
       function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
@@ -57,7 +57,7 @@
         heap.identify({'Experiment #1': 'Slower Feed'});
         heap.addUserProperties({'page2': 'hit'});
       }
-    </script> -->
+    </script>
   </head>
   <body id="page2">
     <h2 id="header">This is Page 2 of Heap!</h2>
