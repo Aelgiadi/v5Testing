@@ -39,7 +39,7 @@
        document.getElementById("errDisp").innerHTML = errorCur;
      };
     </script>
-    <!-- Include Heap -->
+    <!-- Include Heap v5 -->
     <script type="text/javascript">
       // We want to test the old snippet here (which sets window._heapid), to ensure heap.js is backwards-compatible.
       // This old snippet has been mutilated a bit to not have an http/https switch
@@ -58,6 +58,23 @@
         heap.addUserProperties({'page2': 'hit'});
       }
     </script>
+
+        <!-- Include Heap v4 -->
+        <!-- <script type="text/javascript">
+          // We want to test the old snippet here (which sets window._heapid), to ensure heap.js is backwards-compatible.
+          // This old snippet has been mutilated a bit to not have an http/https switch
+          function queryParamExists(e){return null!==RegExp("[\\?&]"+(e=e.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]"))+"=([^&#]*)").exec(location.search)}
+          window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+          heap.load("670508865");
+          // Make sure addEventProperties works when called in head.
+          heap.addEventProperties({loggedIn: 'true'});
+    
+          // Test that we correctly handle identify calls in onload handlers.
+          window.onload = function(){
+            heap.identify({'Experiment #1': 'Slower Feed'});
+            heap.addUserProperties({'page2': 'hit'});
+          }
+        </script> -->
   </head>
   <body id="page2">
     <h2 id="header">This is Page 2 of Heap!</h2>
